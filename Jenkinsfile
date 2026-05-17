@@ -14,7 +14,7 @@ pipeline {
                 echo 'Building the Python Calculator...'
                 // Python is an interpreted language, so a "build" usually involves 
                 // compiling it to bytecode to check for syntax errors.
-                sh 'python3 -m py_compile calculator.py'
+                sh 'python3 -m py_compile Calculator.py'
             }
         }
         
@@ -22,7 +22,7 @@ pipeline {
             steps {
                 echo 'Running execution tests...'
                 // Simulating a test by executing the script to ensure it runs without crashing
-                sh 'python3 calculator.py'
+                sh 'python3 Calculator.py'
             }
         }
     }
