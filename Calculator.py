@@ -43,7 +43,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        self.wfile.write(html_page.format(result="").encode('utf-8'))
+        # Fixed: Using replace() so CSS braces don't break the server
+        self.wfile.write(html_page.replace('{result}', "").encode('utf-8'))
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
@@ -66,10 +67,10 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        self.wfile.write(html_page.format(result=result).encode('utf-8'))
+        # Fixed: Using replace() here as well
+        self.wfile.write(html_page.replace('{result}', str(result)).encode('utf-8'))
 
 if __name__ == "__main__":
-    # This tells the script to host the web app on Port 5000
     server_address = ('', 5000)
     httpd = HTTPServer(server_address, RequestHandler)
     print("Starting web server on port 5000...")
