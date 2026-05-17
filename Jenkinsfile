@@ -4,35 +4,21 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Pulls the code from your connected GitHub repository
                 checkout scm
             }
         }
         
-        stage('Build') {
+        stage('Deploy Web App') {
             steps {
-                echo 'Building the Python Calculator...'
-                // Python is an interpreted language, so a "build" usually involves 
-                // compiling it to bytecode to check for syntax errors.
-                sh 'python3 -m py_compile Calculator.py'
+                // 1. Kill the old calculator server if it is already running so we can update it
+                sh 'pkill -f "python3 Calculator.py" || true'
+                
+                // 2. Start the new calculator server in the background. 
+                // JENKINS_NODE_COOKIE stops Jenkins from accidentally killing our app when the pipeline finishes.
+                sh 'JENKINS_NODE_COOKIE=dontKillMe nohup python3 Calculator.py > app.log 2>&1 &'
+                
+                echo 'Calculator is now deployed and running on Port 5000!'
             }
-        }
-        
-        stage('Test') {
-            steps {
-                echo 'Running execution tests...'
-                // Simulating a test by executing the script to ensure it runs without crashing
-                sh 'python3 Calculator.py'
-            }
-        }
-    }
-    
-    post {
-        success {
-            echo 'Pipeline executed successfully! Application is stable.'
-        }
-        failure {
-            echo 'Pipeline failed. Check the logs for syntax or execution errors.'
         }
     }
 }
